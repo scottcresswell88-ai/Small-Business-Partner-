@@ -5,7 +5,7 @@ let worker: Promise<Worker> | null = null
 /** Lazily load Tesseract (it's large) and reuse one worker for every scan. */
 function getWorker(): Promise<Worker> {
   // Assets are self-hosted in public/ocr (see scripts/copy-ocr-assets.mjs).
-  const base = `${import.meta.env.BASE_URL}ocr`
+  const base = new URL(`${import.meta.env.BASE_URL}ocr`, location.href).href
   worker ??= import('tesseract.js')
     .then(({ createWorker }) =>
       createWorker('eng', undefined, {

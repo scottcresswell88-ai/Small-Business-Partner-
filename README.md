@@ -30,7 +30,14 @@ npm test         # unit tests
 npm run build    # production build in dist/
 ```
 
-To scan receipts with your phone during development, run `npm run dev -- --host` and open the network URL on your phone. The camera needs HTTPS or localhost, so deploy the `dist/` folder to any static host (Netlify, Vercel, GitHub Pages) for everyday use. The app can be added to your home screen.
+### Live site
+
+Every push to `main` runs the tests and publishes the app to GitHub Pages:
+**https://scottcresswell88-ai.github.io/Small-Business-Partner-/**
+
+On your phone, open the link and choose **Add to Home Screen** (Safari: Share menu; Chrome: ⋮ menu) to use it like an app.
+
+One-time setup: the repository must be public (or on a paid GitHub plan), and **Settings → Pages → Source** must be set to **GitHub Actions**.
 
 ## Project structure
 
