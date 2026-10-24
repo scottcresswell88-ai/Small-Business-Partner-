@@ -58,7 +58,7 @@ export function TaxCalculator() {
   return (
     <div className="feature">
       <header className="feature-head">
-        <h2>Tax &amp; GST calculator</h2>
+        <h2>Tax &amp; GST</h2>
         <p className="muted">
           Work out how much of the money coming in should be put aside for {rules.gstName} and income tax.
         </p>
@@ -86,55 +86,54 @@ export function TaxCalculator() {
               </select>
             </label>
           </div>
-          <label className="check">
+          <label className="switch">
+            <span>Registered for {rules.gstName} ({percent(rules.gstRate, 0)})</span>
             <input
               type="checkbox"
               checked={form.gstRegistered}
               onChange={(e) => set('gstRegistered', e.target.checked)}
             />
-            Registered for {rules.gstName} ({percent(rules.gstRate, 0)})
           </label>
 
           <h3>Money in &amp; out</h3>
           <div className="segmented" role="group" aria-label="Period">
             {(Object.keys(PERIODS) as Period[]).map((p) => (
               <button key={p} className={form.period === p ? 'active' : ''} onClick={() => set('period', p)}>
-                Per {PERIODS[p].label.toLowerCase()}
+                {PERIODS[p].label}
               </button>
             ))}
           </div>
           <label>
             Business income this {form.period}
-            <input inputMode="decimal" placeholder="0.00" value={form.income} onChange={(e) => set('income', e.target.value)} />
+            <MoneyInput value={form.income} onChange={(v) => set('income', v)} />
           </label>
           {form.gstRegistered && (
-            <label className="check">
+            <label className="switch">
+              <span>This amount already includes {rules.gstName}</span>
               <input
                 type="checkbox"
                 checked={form.incomeIncludesGst}
                 onChange={(e) => set('incomeIncludesGst', e.target.checked)}
               />
-              This amount already includes {rules.gstName}
             </label>
           )}
           <label>
-            Business expenses this {form.period} <span className="muted">(incl. {rules.gstName})</span>
-            <input inputMode="decimal" placeholder="0.00" value={form.expenses} onChange={(e) => set('expenses', e.target.value)} />
+            <span>
+              Business expenses this {form.period} <small className="muted">incl. {rules.gstName}</small>
+            </span>
+            <MoneyInput value={form.expenses} onChange={(v) => set('expenses', v)} />
           </label>
           {form.structure === 'sole_trader' && (
             <label>
-              Other income for the year <span className="muted">(e.g. wages — affects your tax bracket)</span>
-              <input
-                inputMode="decimal"
-                placeholder="0.00"
-                value={form.otherIncome}
-                onChange={(e) => set('otherIncome', e.target.value)}
-              />
+              <span>
+                Other income for the year <small className="muted">e.g. wages — affects your tax bracket</small>
+              </span>
+              <MoneyInput value={form.otherIncome} onChange={(v) => set('otherIncome', v)} />
             </label>
           )}
         </section>
 
-        <section className="card result">
+        <section className="card result" id="tax-result">
           <div className="headline">
             <span className="muted">Put aside</span>
             <strong>{percent(result.setAsideRate)}</strong>
@@ -207,8 +206,10 @@ export function TaxCalculator() {
         <p className="muted">Enter a payment you received to see exactly how much to move into savings.</p>
         <div className="row payment">
           <label>
-            Payment received <span className="muted">(as paid, incl. {rules.gstName})</span>
-            <input inputMode="decimal" placeholder="0.00" value={form.payment} onChange={(e) => set('payment', e.target.value)} />
+            <span>
+              Payment received <small className="muted">as paid, incl. {rules.gstName}</small>
+            </span>
+            <MoneyInput value={form.payment} onChange={(v) => set('payment', v)} />
           </label>
           <div className="pay-split">
             <div>
@@ -227,11 +228,26 @@ export function TaxCalculator() {
         </div>
       </section>
 
+      <a className="sticky-summary" href="#tax-result" aria-label="Jump to result">
+        <span>Put aside</span>
+        <strong>{percent(result.setAsideRate)}</strong>
+        <span className="muted">{$(result.totalToSetAside)} per {form.period}</span>
+      </a>
+
       <p className="disclaimer">
         Estimates only, based on standard resident rates. Doesn’t include offsets, HELP/student loan repayments,
         super, provisional tax timing, or other individual circumstances. Check with your accountant.
       </p>
     </div>
+  )
+}
+
+function MoneyInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <span className="money-input">
+      <span>$</span>
+      <input inputMode="decimal" placeholder="0.00" value={value} onChange={(e) => onChange(e.target.value)} />
+    </span>
   )
 }
 

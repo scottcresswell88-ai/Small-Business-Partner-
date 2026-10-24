@@ -27,8 +27,18 @@ describe('summarise', () => {
     expect(s.total).toBe(181.5)
   })
 
-  it('charges no GST when not registered', () => {
-    expect(summarise([receipt({})], 0, 0).total).toBe(100)
+  it('bills exactly the receipt amount when there is no markup', () => {
+    const s = summarise([receipt({ total: 49.5, gst: 4.5 })], 0, 0.1)
+    expect(s.subtotal).toBe(45)
+    expect(s.gst).toBe(4.5)
+    expect(s.total).toBe(49.5)
+  })
+
+  it('bills the full amount paid, with no GST, when not registered', () => {
+    const s = summarise([receipt({})], 0, 0)
+    expect(s.cost).toBe(110)
+    expect(s.gst).toBe(0)
+    expect(s.total).toBe(110)
   })
 })
 

@@ -33,6 +33,13 @@ EFTPOS                       49.50`
     expect(parseReceipt('Cafe\n4.50\n12.00\n7.25').total).toBe(12)
   })
 
+  it('reads pasted email receipts', () => {
+    const text = 'Your Uber receipt\nThanks for riding, Scott\n21 Oct 2026\nTotal $34.10\nIncludes GST $3.10'
+    expect(parseReceipt(text)).toEqual({ merchant: 'Uber', date: '2026-10-21', total: 34.1, gst: 3.1 })
+    expect(parseReceipt('Receipt from Apple\nTotal $14.99').merchant).toBe('Apple')
+    expect(parseReceipt('Thank you for your order\nJB Hi-Fi\nTotal $99.00').merchant).toBe('JB Hi-Fi')
+  })
+
   it('returns nulls for unreadable text', () => {
     expect(parseReceipt('')).toEqual({ merchant: '', date: null, total: null, gst: null })
   })

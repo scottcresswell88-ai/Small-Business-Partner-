@@ -6,9 +6,10 @@ export interface BusinessDetails {
   contact: string
   region: Region
   markup: string // % added to rebilled expenses
+  gstRegistered: boolean
 }
 
-export const BUSINESS_DEFAULTS: BusinessDetails = { name: '', taxId: '', contact: '', region: 'AU', markup: '0' }
+export const BUSINESS_DEFAULTS: BusinessDetails = { name: '', taxId: '', contact: '', region: 'AU', markup: '0', gstRegistered: true }
 
 export const CATEGORIES = [
   'Materials',
