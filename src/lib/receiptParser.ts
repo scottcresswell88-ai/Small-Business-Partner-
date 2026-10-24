@@ -44,9 +44,25 @@ export function parseReceipt(text: string): ParsedReceipt {
     .map((l) => l.trim())
     .filter(Boolean)
 
-  // Merchant: first line with a few letters that isn't obviously a header like "TAX INVOICE".
-  const merchant =
-    lines.find((l) => /[A-Za-z]{3,}/.test(l) && !/tax\s*invoice|receipt|abn|gst\s*no/i.test(l)) ?? ''
+  // Merchant: emailed receipts often say "Your Uber receipt" or "Receipt from Apple";
+  // otherwise take the first line with a few letters that isn't a header like "TAX INVOICE".
+  let merchant = ''
+  for (const line of lines.slice(0, 8)) {
+    const m =
+      line.match(/^(?:your\s+)?(.+?)\s+(?:receipt|tax invoice|invoice|order)\b/i) ??
+      line.match(/^(?:receipt|tax invoice|invoice|order)\s+from\s+(.+)$/i)
+    const name = m?.[1] ?? ''
+    // Skip phrases like "Thank you for your order".
+    const plausible = /[A-Za-z]{2,}/.test(name) && name.split(/\s+/).length <= 4
+    if (plausible && !/^(tax|your|a|the)$|thank|\byour\b/i.test(name)) {
+      merchant = name.trim()
+      break
+    }
+  }
+  merchant ||=
+    lines.find(
+      (l) => /[A-Za-z]{2,}/.test(l) && !amountsIn(l).length && !/tax\s*invoice|receipt|abn|gst\s*no|thank/i.test(l),
+    ) ?? ''
 
   // Total: prefer lines labelled total / amount due / balance, ignoring subtotals.
   let total: number | null = null

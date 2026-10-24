@@ -13,7 +13,9 @@ export interface Receipt {
   gst: number
   billable: boolean
   invoiced: boolean
-  image?: string // downscaled JPEG data URL
+  image?: string // downscaled JPEG data URL (first page for PDFs)
+  pdf?: Blob // original PDF, when imported from one
+  source?: 'photo' | 'pdf' | 'text' | 'manual'
   ocrText?: string
 }
 

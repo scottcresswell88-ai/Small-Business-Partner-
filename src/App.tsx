@@ -16,7 +16,10 @@ function currentFeature() {
 export default function App() {
   const [feature, setFeature] = useState(currentFeature)
   useEffect(() => {
-    const onHash = () => setFeature(currentFeature())
+    const onHash = () => {
+      setFeature(currentFeature())
+      window.scrollTo(0, 0)
+    }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
@@ -24,22 +27,25 @@ export default function App() {
 
   return (
     <div className="app">
-      <nav className="nav no-print">
+      <header className="topbar no-print">
         <div className="brand">
           <span className="logo">SB</span>
           <span>Small Business Partner</span>
         </div>
-        <div className="tabs">
-          {FEATURES.map((f) => (
-            <a key={f.id} href={`#${f.id}`} className={f.id === feature.id ? 'active' : ''}>
-              <span aria-hidden>{f.icon}</span> {f.label}
-            </a>
-          ))}
-        </div>
-      </nav>
+      </header>
       <main>
         <Feature />
       </main>
+      <nav className="tabbar no-print" aria-label="Features">
+        {FEATURES.map((f) => (
+          <a key={f.id} href={`#${f.id}`} className={f.id === feature.id ? 'active' : ''} aria-current={f.id === feature.id ? 'page' : undefined}>
+            <span className="tab-icon" aria-hidden>
+              {f.icon}
+            </span>
+            <span>{f.label}</span>
+          </a>
+        ))}
+      </nav>
     </div>
   )
 }

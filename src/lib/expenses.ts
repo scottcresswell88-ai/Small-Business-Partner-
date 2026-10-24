@@ -21,12 +21,18 @@ export interface ExpenseSummary {
 }
 
 /**
- * Turn receipts into rebillable lines. Expenses are rebilled at their GST-exclusive
- * cost plus markup, then GST is charged on top (when the business is GST registered).
+ * Turn receipts into rebillable lines.
+ *
+ * GST registered (gstRate > 0): the GST on the receipt is claimed back as a credit,
+ * so the expense is rebilled at its GST-exclusive cost (plus markup) and GST is
+ * charged on that. With no markup the client pays exactly what the receipt shows.
+ *
+ * Not registered (gstRate = 0): no credit can be claimed and no GST can be charged,
+ * so the full amount paid is the cost.
  */
 export function summarise(receipts: Receipt[], markupPct: number, gstRate: number): ExpenseSummary {
   const lines = receipts.map((receipt) => {
-    const exGst = receipt.total - receipt.gst
+    const exGst = gstRate > 0 ? receipt.total - receipt.gst : receipt.total
     const markup = round2((exGst * markupPct) / 100)
     const charge = round2(exGst + markup)
     const chargeGst = round2(charge * gstRate)

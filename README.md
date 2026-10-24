@@ -15,11 +15,14 @@ A personal assistant app for small business owners. It runs in the browser (desk
 Rates live in `src/lib/tax.ts`. Update them each financial year.
 
 ### 🧾 Receipts & expenses
-- **Scan** a receipt with your phone camera, or upload several photos at once.
-- Text recognition (Tesseract) runs **in the browser**: it reads the supplier, date, total and GST, and you can correct anything it gets wrong. Receipt images never leave your device.
+- **Scan** a receipt with your phone camera, upload photos or **PDF receipts**, or **paste the text of an emailed receipt**.
+- Digital PDFs are read straight from their text, which is very accurate. Photos and scanned PDFs go through text recognition (Tesseract) **in the browser**. Either way the app suggests the supplier, date, total and GST for you to check. Nothing leaves your device.
+- GST is worked out from the total automatically (10% AU / 15% NZ), or you can choose another amount or GST-free.
 - Tag each receipt to a client or job and a category, and mark it billable or not.
-- Filter by client and date range to get an **expense statement** for rebilling, with an optional markup and GST on top.
-- **Print / save as PDF**, **export to CSV** (for Xero, MYOB or a spreadsheet), and **mark expenses as invoiced** so you never bill them twice.
+- Filter by client and date range to get an **expense invoice** for rebilling:
+  - **GST registered:** the expense is rebilled at its GST-exclusive cost, plus any markup, with GST added. With no markup the client pays exactly what the receipt shows.
+  - **Not registered:** the full amount you paid is rebilled, with no GST.
+- **Save as PDF**, **export to CSV** (for Xero, MYOB or a spreadsheet), and **mark expenses as invoiced** so you never bill them twice.
 
 ## Getting started
 
@@ -52,6 +55,7 @@ src/
     receiptParser.ts      # pulls supplier/date/total/GST out of OCR text
     expenses.ts           # rebilling totals and CSV export
     ocr.ts                # self-hosted Tesseract worker + image downscaling
+    pdf.ts                # PDF receipt text extraction and page rendering (pdf.js)
     storage.ts            # IndexedDB (receipts) and localStorage (settings)
 scripts/copy-ocr-assets.mjs  # copies OCR engine + language data into public/ocr
 ```
